@@ -19,6 +19,7 @@ public class FacesMessages implements Serializable {
 	}
 	
 	public void info(String message) {
+//		 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", message));
 		add(message, FacesMessage.SEVERITY_INFO);
 	}
 	

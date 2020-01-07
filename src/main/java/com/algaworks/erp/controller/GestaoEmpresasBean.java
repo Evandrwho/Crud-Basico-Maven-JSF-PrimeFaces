@@ -7,6 +7,9 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.primefaces.PrimeFaces;
+import org.primefaces.context.PrimeRequestContext;
+
 import com.algaworks.erp.model.Empresa;
 import com.algaworks.erp.model.TipoEmpresa;
 import com.algaworks.erp.repository.Empresas;
@@ -24,16 +27,17 @@ public class GestaoEmpresasBean implements Serializable {
 	private Empresas empresas;
 	
 	@Inject
-	private CadastroEmpresaService cadastroEmpresa;
-	
-	private TipoEmpresa tipoEmpresa;
-	
-	private Empresa empresaEdicao = new Empresa();	
-
-	private List<Empresa> todasEmpresas;
+	private CadastroEmpresaService cadastroEmpresa;	
 	
 	@Inject
-	private FacesMessages messages;
+	private FacesMessages message;
+	
+	private TipoEmpresa tipoEmpresa;	
+	private Empresa empresaEdicao = new Empresa();	
+	private List<Empresa> todasEmpresas;
+	private Empresa empresaSelecionada;
+	
+
 	
 	public void prepararNovoCadastro(){
 		this.empresaEdicao = new Empresa(); 
@@ -42,7 +46,17 @@ public class GestaoEmpresasBean implements Serializable {
 	public void salvar() {
 		this.cadastroEmpresa.salvar(empresaEdicao);
 		this.consultar();
-		messages.info("Empresa salva com sucesso");
+		message.info("Empresa salva com sucesso!");
+		PrimeFaces.current().ajax().update("frm:messages","frm:empresas-cadastradas");//atualiza componentes primefaces
+	}
+	
+	public void excluir() {
+		String nomeEmpresaExcluida = this.empresaSelecionada.getNomeFantasia();
+		cadastroEmpresa.excluir(empresaSelecionada);
+		this.empresaSelecionada=null;
+		this.consultar();
+		message.info("Espresa "+nomeEmpresaExcluida+" excluída com sucesso!");
+		nomeEmpresaExcluida=null;
 	}
 	
 	public void consultar() {
@@ -64,4 +78,16 @@ public class GestaoEmpresasBean implements Serializable {
 	public void setEmpresaEdicao(Empresa empresaEdicao) {
 		this.empresaEdicao = empresaEdicao;
 	}
+
+	public Empresa getEmpresaSelecionada() {
+		return empresaSelecionada;
+	}
+
+	public void setEmpresaSelecionada(Empresa empresaSelecionada) {
+		this.empresaSelecionada = empresaSelecionada;
+	}
+	
+	
+	
+	
 }
